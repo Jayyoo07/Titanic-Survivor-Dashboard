@@ -2,3 +2,6 @@ streamlit>=1.30.0
 pandas>=2.0.0
 plotly>=5.18.0
 numpy>=1.24.0
+
+# Accessing Streamlit Dashboard
+https://titanic-survivor-dashboard-hzx5v63zrmngvbwrvmuikb.streamlit.app/
