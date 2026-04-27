@@ -155,10 +155,11 @@ gap            = fc_female_rate - tc_male_rate
 st.markdown(f"""
 <div class="insight-box">
   <h3> KEY INSIGHT — Survival was decided by class and sex, not chance.</h3>
-  <p>A <b>First-Class woman</b> had a <b>{fc_female_rate:.0f}%</b> chance of surviving.
-  A <b>Third-Class man</b> had only a <b>{tc_male_rate:.0f}%</b> chance — a stark
-  <b>{gap:.0f}-point</b> gap. The "women and children first" protocol existed,
-  but it was unevenly enforced across decks. Class privilege, was the strongest single predictor of survivability.</p>
+  <p>A <b> Female First-Class passenger</b> had a <b>{fc_female_rate:.0f}%</b> chance of surviving. While 
+   <b>Male Third-Class passenger</b> had only a <b>{tc_male_rate:.0f}%</b> chance, that's a stark
+  <b>{gap:.0f}-point</b> gap. The "women and children first" protocol existed, hence why the male to female survival ratio is so high,
+  but it was unevenly enforced across decks. Class privilege, was the strongest single predictor of survivability. 
+  The sex of the individual is a close second</p>
 </div>
 """, unsafe_allow_html=True)
 
