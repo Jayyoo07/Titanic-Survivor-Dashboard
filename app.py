@@ -21,10 +21,10 @@ st.set_page_config(
 
 #  COLOR PALETTE 
 
-COLOR_SURVIVED = "#2A9D8F"     # teal — life
-COLOR_PERISHED = "#9B2226"     # burgundy — loss
-COLOR_PRIMARY  = "#0B2545"     # deep navy — branding
-COLOR_ACCENT   = "#E8B04B"     # warm gold — highlight
+COLOR_SURVIVED = "#2A9D8F"     
+COLOR_PERISHED = "#9B2226"     
+COLOR_PRIMARY  = "#0B2545"     
+COLOR_ACCENT   = "#E8B04B"     
 SURVIVAL_PALETTE = {"Yes": COLOR_SURVIVED, "No": COLOR_PERISHED}
 
 #  CSS 
