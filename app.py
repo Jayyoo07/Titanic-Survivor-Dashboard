@@ -32,6 +32,17 @@ st.markdown("""
   section[data-testid="stSidebar"] * { color: #F4F6F8 !important; }
   section[data-testid="stSidebar"] .stSlider > div > div { background: #E8B04B !important; }
 
+  /* restore original red multiselect tags */
+  section[data-testid="stSidebar"] span[data-baseweb="tag"] {
+      background-color: #E63946 !important;
+      border-radius: 4px !important;
+  }
+  section[data-testid="stSidebar"] span[data-baseweb="tag"] span { color: #FFFFFF !important; }
+  section[data-testid="stSidebar"] [data-baseweb="select"] > div {
+      background-color: #13315C !important;
+      border-color: #2A4A7F !important;
+  }
+
   [data-testid="stMetric"] {
       background: #F4F6F8; border-left: 5px solid #0B2545;
       padding: 14px 16px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
@@ -155,12 +166,12 @@ avg_fare      = filtered["Fare"].mean()
 st.markdown("### At a Glance")
 st.caption("Live totals for your current filter selection.")
 c1, c2, c3, c4, c5, c6 = st.columns(6)
-c1.metric("Passengers",      f"{total:,}")
-c2.metric("Survivors",       f"{survivors:,}")
-c3.metric("Survival Rate",   f"{survival_rate:.1f}%")
-c4.metric("Female Survival", f"{female_rate:.1f}%")
-c5.metric("Male Survival",   f"{male_rate:.1f}%")
-c6.metric("Avg Fare",        f"£{avg_fare:.2f}")
+c1.metric("👥 Passengers",      f"{total:,}")
+c2.metric("👨‍👩‍👧‍👧 Survivors",       f"{survivors:,}")
+c3.metric("📈 Survival Rate",   f"{survival_rate:.1f}%")
+c4.metric("♀ Female Survival", f"{female_rate:.1f}%")
+c5.metric("♂ Male Survival",   f"{male_rate:.1f}%")
+c6.metric("💷 Avg Fare",        f"£{avg_fare:.2f}")
 
 fc_female_rate = df[(df["Pclass"] == "First Class") & (df["Sex"] == "Female")]["SurvivedBin"].mean() * 100
 tc_male_rate   = df[(df["Pclass"] == "Third Class") & (df["Sex"] == "Male")]["SurvivedBin"].mean() * 100
