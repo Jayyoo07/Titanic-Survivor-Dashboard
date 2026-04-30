@@ -19,15 +19,14 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-#  COLOR PALETTE 
-
-COLOR_SURVIVED = "#2A9D8F"     # teal — life
-COLOR_PERISHED = "#9B2226"     # burgundy — loss
-COLOR_PRIMARY  = "#0B2545"     # deep navy — branding
-COLOR_ACCENT   = "#E8B04B"     # warm gold — highlight
+#  COLOR PALETTE
+COLOR_SURVIVED = "#2A9D8F"
+COLOR_PERISHED = "#9B2226"
+COLOR_PRIMARY  = "#0B2545"
+COLOR_ACCENT   = "#E8B04B"
 SURVIVAL_PALETTE = {"Yes": COLOR_SURVIVED, "No": COLOR_PERISHED}
 
-#  CSS 
+#  CSS
 st.markdown("""
 <style>
     h1, h2, h3 {
@@ -61,6 +60,17 @@ st.markdown("""
         font-size: 16px; line-height: 1.6; margin: 0;
         color: #F4F6F8;
     }
+    .mini-insight {
+        background: #F7F9FB;
+        border-left: 5px solid #2A9D8F;
+        padding: 13px 20px;
+        border-radius: 0 8px 8px 0;
+        margin: 4px 0 32px 0;
+        font-size: 14px;
+        color: #2C3E50;
+        line-height: 1.65;
+    }
+    .mini-insight strong { color: #0B2545; }
     .footer {
         text-align: center; color: #5A6B7B; font-size: 13px;
         padding: 18px 0; border-top: 1px solid #D8DEE4; margin-top: 40px;
@@ -129,41 +139,39 @@ if filtered.empty:
     st.stop()
 
 #  KPI ROW
-total          = len(filtered)
-survivors      = int(filtered["SurvivedBin"].sum())
-survival_rate  = survivors / total * 100
-female_rate    = (filtered.loc[filtered["Sex"] == "Female", "SurvivedBin"].mean() * 100
-                  if (filtered["Sex"] == "Female").any() else 0)
-male_rate      = (filtered.loc[filtered["Sex"] == "Male",   "SurvivedBin"].mean() * 100
-                  if (filtered["Sex"] == "Male").any() else 0)
-avg_age        = filtered["Age"].mean()
-avg_fare       = filtered["Fare"].mean()
+total         = len(filtered)
+survivors     = int(filtered["SurvivedBin"].sum())
+survival_rate = survivors / total * 100
+female_rate   = (filtered.loc[filtered["Sex"] == "Female", "SurvivedBin"].mean() * 100
+                 if (filtered["Sex"] == "Female").any() else 0)
+male_rate     = (filtered.loc[filtered["Sex"] == "Male", "SurvivedBin"].mean() * 100
+                 if (filtered["Sex"] == "Male").any() else 0)
+avg_fare      = filtered["Fare"].mean()
 
 c1, c2, c3, c4, c5, c6 = st.columns(6)
-c1.metric("👥 Passengers",      f"{total:,}")
-c2.metric("👨‍👩‍👧‍👧 Survivors",        f"{survivors:,}")
-c3.metric("📈 Survival Rate",    f"{survival_rate:.1f}%")
-c4.metric("♀ Female Survival",   f"{female_rate:.1f}%")
-c5.metric("♂ Male Survival",     f"{male_rate:.1f}%")
-c6.metric("💷 Avg Fare",         f"£{avg_fare:.2f}")
+c1.metric("👥 Passengers",    f"{total:,}")
+c2.metric("👨‍👩‍👧‍👧 Survivors",      f"{survivors:,}")
+c3.metric("📈 Survival Rate",  f"{survival_rate:.1f}%")
+c4.metric("♀ Female Survival", f"{female_rate:.1f}%")
+c5.metric("♂ Male Survival",   f"{male_rate:.1f}%")
+c6.metric("💷 Avg Fare",       f"£{avg_fare:.2f}")
 
-#  KEY INSIGHT CALLOUT  (always computed on the FULL dataset for stability)
+# KEY INSIGHT CALLOUT (full dataset for stability)
 fc_female_rate = df[(df["Pclass"] == "First Class") & (df["Sex"] == "Female")]["SurvivedBin"].mean() * 100
 tc_male_rate   = df[(df["Pclass"] == "Third Class") & (df["Sex"] == "Male")]["SurvivedBin"].mean() * 100
 gap            = fc_female_rate - tc_male_rate
 
 st.markdown(f"""
 <div class="insight-box">
-  <h3> KEY INSIGHT — Survival was decided by class and sex, not chance.</h3>
-  <p>A <b> Female First-Class passenger</b> had a <b>{fc_female_rate:.0f}%</b> chance of surviving. While 
-   <b>Male Third-Class passenger</b> had only a <b>{tc_male_rate:.0f}%</b> chance, that's a stark
-  <b>{gap:.0f}-point</b> gap. The "women and children first" protocol existed, hence why the male to female survival ratio is so high,
-  but it was unevenly enforced across decks. Class privilege, was the strongest single predictor of survivability. 
-  The sex of the individual is a close second</p>
+  <h3>🔍 KEY INSIGHT — Survival was decided by class and sex, not chance.</h3>
+  <p>A <b>Female First-Class passenger</b> had a <b>{fc_female_rate:.0f}%</b> chance of surviving.
+  A <b>Male Third-Class passenger</b> had only <b>{tc_male_rate:.0f}%</b> — a stark <b>{gap:.0f}-point gap</b>.
+  The "women and children first" protocol existed but was unevenly enforced across decks.
+  Class privilege was the strongest single predictor of survivability; sex was a close second.</p>
 </div>
 """, unsafe_allow_html=True)
 
-#  ROW 1 — Heatmap (centerpiece) + Sunburst
+# ── ROW 1 — Heatmap + Sunburst ───────────────────────────────────────────────
 st.markdown("### Survival by Class and Sex")
 col_a, col_b = st.columns([1.05, 1])
 
@@ -202,7 +210,23 @@ with col_b:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-#  ROW 2 — Age histogram + Fare boxplot
+# ── INSIGHT after Row 1 ──────────────────────────────────────────────────────
+f1_df = filtered[(filtered["Pclass"] == "First Class") & (filtered["Sex"] == "Female")]
+m3_df = filtered[(filtered["Pclass"] == "Third Class") & (filtered["Sex"] == "Male")]
+f1_rate = f1_df["SurvivedBin"].mean() * 100 if len(f1_df) > 0 else 0
+m3_rate = m3_df["SurvivedBin"].mean() * 100 if len(m3_df) > 0 else 0
+
+st.markdown(f"""
+<div class="mini-insight">
+💡 <strong>Being female in any class outperformed being male in the class above.</strong>
+First-Class women survived at <strong>{f1_rate:.0f}%</strong> — near-certain rescue —
+while Third-Class men had just <strong>{m3_rate:.0f}%</strong> odds.
+The sunburst shows Third Class carried the most passengers but yielded the fewest survivors,
+confirming that deck location and gate access shaped outcomes as much as any official protocol.
+</div>
+""", unsafe_allow_html=True)
+
+# ── ROW 2 — Age histogram + Fare boxplot ─────────────────────────────────────
 col_c, col_d = st.columns(2)
 
 with col_c:
@@ -234,7 +258,23 @@ with col_d:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-#  ROW 3 — Family size dual-axis + Embarkation stack
+# ── INSIGHT after Row 2 ──────────────────────────────────────────────────────
+child_df = filtered[filtered["Age"] < 10]
+child_surv = child_df["SurvivedBin"].mean() * 100 if len(child_df) > 0 else 0
+median_fare_surv = filtered[filtered["Survived"] == "Yes"]["Fare"].median()
+median_fare_died = filtered[filtered["Survived"] == "No"]["Fare"].median()
+
+st.markdown(f"""
+<div class="mini-insight">
+💡 <strong>Age mattered most at the youngest end; fare mattered most inside First Class.</strong>
+Children under 10 survived at <strong>{child_surv:.0f}%</strong> — "children first" had real weight.
+Survivors paid a median fare of <strong>£{median_fare_surv:.1f}</strong> vs <strong>£{median_fare_died:.1f}</strong>
+for those who perished. Yet in Third Class, fare spread between survivors and non-survivors is negligible —
+once on the lower decks, spending more on a ticket made no further difference.
+</div>
+""", unsafe_allow_html=True)
+
+# ── ROW 3 — Family size + Embarkation ────────────────────────────────────────
 col_e, col_f = st.columns(2)
 
 with col_e:
@@ -284,7 +324,26 @@ with col_f:
     fig.update_traces(textposition="inside", textfont_color="white")
     st.plotly_chart(fig, use_container_width=True)
 
-#  ROW 4 — Title violin + Age-group bar
+# ── INSIGHT after Row 3 ──────────────────────────────────────────────────────
+alone_rate    = fam.loc[fam["FamilySize"] == 1, "rate"].values[0] if 1 in fam["FamilySize"].values else 0
+best_fam_size = int(fam.loc[fam["rate"].idxmax(), "FamilySize"]) if not fam.empty else 0
+best_fam_rate = fam["rate"].max() if not fam.empty else 0
+cherb_df      = filtered[filtered["EmbarkedPort"] == "Cherbourg"]
+cherb_rate    = cherb_df["SurvivedBin"].mean() * 100 if len(cherb_df) > 0 else 0
+
+st.markdown(f"""
+<div class="mini-insight">
+💡 <strong>Small families outlasted solo travellers; Cherbourg passengers fared best of all ports.</strong>
+Travelling alone gave just <strong>{alone_rate:.0f}%</strong> survival odds, while a family of
+<strong>{best_fam_size}</strong> reached <strong>{best_fam_rate:.0f}%</strong> —
+companions likely helped secure lifeboat spots.
+Very large families (7+) saw survival collapse, probably overwhelmed by the chaos of coordinating group evacuation.
+Cherbourg's <strong>{cherb_rate:.0f}%</strong> survival rate reflects its wealthier, First-Class–heavy boarding mix
+rather than any advantage of the port itself.
+</div>
+""", unsafe_allow_html=True)
+
+# ── ROW 4 — Title violin + Age-group bar ─────────────────────────────────────
 col_g, col_h = st.columns(2)
 
 with col_g:
@@ -321,7 +380,29 @@ with col_h:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-#  DATA EXPLORER
+# ── INSIGHT after Row 4 ──────────────────────────────────────────────────────
+master_df  = filtered[filtered["Title"] == "Master"]
+mr_df      = filtered[filtered["Title"] == "Mr"]
+master_surv = master_df["SurvivedBin"].mean() * 100 if len(master_df) > 0 else 0
+mr_surv     = mr_df["SurvivedBin"].mean() * 100 if len(mr_df) > 0 else 0
+top_age_group = ag.loc[ag["Survival %"].idxmax(), "AgeGroup"] if not ag.empty else "—"
+top_age_rate  = ag["Survival %"].max() if not ag.empty else 0
+low_age_group = ag.loc[ag["Survival %"].idxmin(), "AgeGroup"] if not ag.empty else "—"
+low_age_rate  = ag["Survival %"].min() if not ag.empty else 0
+
+st.markdown(f"""
+<div class="mini-insight">
+💡 <strong>Boys and women were prioritised; adult men faced the worst odds at every age.</strong>
+"Master" (boys under ~13) survived at <strong>{master_surv:.0f}%</strong>, while "Mr" —
+the largest title group by far — managed only <strong>{mr_surv:.0f}%</strong>.
+By age group, <strong>{top_age_group}</strong> had the highest survival rate at <strong>{top_age_rate:.0f}%</strong>;
+<strong>{low_age_group}</strong> had the lowest at <strong>{low_age_rate:.0f}%</strong>.
+The "Rare" title group (officers, clergy, nobility) shows the widest age spread —
+a mix of duty-bound crew, older elites, and privileged exceptions.
+</div>
+""", unsafe_allow_html=True)
+
+# ── DATA EXPLORER ─────────────────────────────────────────────────────────────
 with st.expander("📋 Browse the underlying passenger records"):
     show_cols = ["Name", "Survived", "Pclass", "Sex", "Age", "Fare",
                  "FamilySize", "EmbarkedPort", "Title"]
@@ -332,8 +413,7 @@ with st.expander("📋 Browse the underlying passenger records"):
         csv, "titanic_filtered.csv", "text/csv",
     )
 
-#  FOOTER  /  ATTRIBUTION
-
+# ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
   <b>Data source:</b>
@@ -341,6 +421,6 @@ st.markdown("""
     Kaggle — Titanic Survival Prediction Dataset
   </a>, derived from
   <a href="https://www.encyclopedia-titanica.org/" target="_blank">Encyclopedia Titanica</a>.
-  Public-domain passenger manifest. <br>
+  Public-domain passenger manifest.
 </div>
 """, unsafe_allow_html=True)
