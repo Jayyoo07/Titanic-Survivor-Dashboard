@@ -217,7 +217,7 @@ st.markdown(f"""
    <b>Male Third-Class passenger</b> had only a <b>{tc_male_rate:.0f}%</b> chance, that's a stark
   <b>{gap:.0f}-point</b> gap. The "women and children first" protocol existed, hence why the male to female survival ratio is so high,
   but it was unevenly enforced across decks. Class privilege, was the strongest single predictor of survivability. 
-  The sex of the individual is a close second</p>
+  The sex of the individual is a close second.</p>
 </div>
 """, unsafe_allow_html=True)
 
