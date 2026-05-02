@@ -119,6 +119,18 @@ st.markdown("""
         padding: 18px 0; border-top: 1px solid #D8DEE4; margin-top: 40px;
     }
     .footer a { color: #0B2545; text-decoration: none; font-weight: 600; }
+    
+    /* Sidebar Filter Options (Tags) */
+    section[data-testid="stSidebar"] span[data-baseweb="tag"] {
+        background-color: #F0B400 !important;
+        border-radius: 5px !important;
+        padding: 2px 8px !important;
+    }
+    section[data-testid="stSidebar"] span[data-baseweb="tag"] span,
+    section[data-testid="stSidebar"] span[data-baseweb="tag"] svg { 
+        color: #0B2545 !important; 
+        fill: #0B2545 !important; 
+    }
 </style>
 """, unsafe_allow_html=True)
 
