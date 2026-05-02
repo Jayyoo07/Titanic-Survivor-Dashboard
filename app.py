@@ -63,6 +63,10 @@ st.markdown("""
         font-size: 16px; line-height: 1.6; margin: 0;
         color: #F4F6F8;
     }
+    .chart-caption {
+        font-size: 13.5px; color: #5A6B7B; margin-top: -6px; margin-bottom: 24px; margin-left: 2px;
+        line-height: 1.5; border-left: 3px solid #D8DEE4; padding-left: 10px;
+    }
     .footer {
         text-align: center; color: #5A6B7B; font-size: 13px;
         padding: 18px 0; border-top: 1px solid #D8DEE4; margin-top: 40px;
@@ -194,6 +198,7 @@ with col_a:
     )
     fig.update_traces(textfont=dict(size=20, color="black", family="Georgia"))
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Being female significantly improved survival chances across all classes. First-class females had the highest survival rate, while third-class males faced the lowest odds.</p>', unsafe_allow_html=True)
 
 with col_b:
     sb = filtered.groupby(["Pclass", "Sex", "Survived"], observed=True).size().reset_index(name="Count")
@@ -208,6 +213,7 @@ with col_b:
         height=380,
     )
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">The outermost ring highlights the stark contrast in outcomes. Third-class passengers made up the largest group on board but yielded the fewest survivors.</p>', unsafe_allow_html=True)
 
 #  ROW 2 — Age histogram + Fare boxplot
 col_c, col_d = st.columns(2)
@@ -225,6 +231,7 @@ with col_c:
         height=420, bargap=0.05,
     )
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Young children had disproportionately high survival rates across all demographics. Adult men between 20 and 40 formed the largest passenger segment but suffered the most casualties.</p>', unsafe_allow_html=True)
 
 with col_d:
     fig = px.box(
@@ -240,6 +247,7 @@ with col_d:
         height=420,
     )
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Passengers who survived generally paid higher ticket fares, particularly in first class. In lower classes, spending slightly more money made little to no difference in survival.</p>', unsafe_allow_html=True)
 
 #  ROW 3 — Family size dual-axis + Embarkation stack
 col_e, col_f = st.columns(2)
@@ -274,6 +282,7 @@ with col_e:
     fig.update_yaxes(title_text="Passengers", secondary_y=False)
     fig.update_yaxes(title_text="Survival %", secondary_y=True, range=[0, 100])
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Passengers travelling in small groups survived at much higher rates than solo travellers. However, coordinating evacuation for families of 5 or more proved highly detrimental.</p>', unsafe_allow_html=True)
 
 with col_f:
     emb = (filtered.groupby(["EmbarkedPort", "Survived"])
@@ -290,6 +299,7 @@ with col_f:
     )
     fig.update_traces(textposition="inside", textfont_color="white")
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Cherbourg passengers show higher survival rates primarily because more wealthy, first-class passengers boarded there. Southampton provided the most passengers but saw the highest overall losses.</p>', unsafe_allow_html=True)
 
 #  ROW 4 — Title violin + Age-group bar
 col_g, col_h = st.columns(2)
@@ -307,6 +317,7 @@ with col_g:
         height=420,
     )
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">"Master" (young boys) and female titles were heavily prioritised during the evacuation. In contrast, "Mr"—the largest passenger group—experienced the poorest survival rates regardless of age.</p>', unsafe_allow_html=True)
 
 with col_h:
     ag = (filtered.groupby("AgeGroup", observed=True)["SurvivedBin"]
@@ -327,6 +338,7 @@ with col_h:
         coloraxis_showscale=False,
     )
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<p class="chart-caption">Infants and young children were the most likely demographic to survive. Survival chances steadily declined for older teenagers and adults before dropping off entirely for senior passengers.</p>', unsafe_allow_html=True)
 
 #  DATA EXPLORER
 with st.expander("📋 Browse the underlying passenger records"):
