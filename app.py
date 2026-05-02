@@ -44,6 +44,8 @@ st.markdown("""
     }
     [data-testid="stMetricLabel"] { font-size: 13px; color: #5A6B7B; }
     [data-testid="stMetricValue"] { font-size: 28px; font-weight: 700; color: #0B2545; }
+    [data-testid="stMetricDelta"] { font-size: 13px !important; color: #5A6B7B !important; }
+    [data-testid="stMetricDelta"] svg { display: none; }
     .insight-box {
         background: linear-gradient(135deg, #0B2545 0%, #13315C 100%);
         color: #F4F6F8;
@@ -131,21 +133,26 @@ if filtered.empty:
 #  KPI ROW
 total          = len(filtered)
 survivors      = int(filtered["SurvivedBin"].sum())
-survival_rate  = survivors / total * 100
+perished       = total - survivors
+survival_rate  = (survivors / total * 100) if total > 0 else 0
+perished_rate  = (perished / total * 100) if total > 0 else 0
+
 female_rate    = (filtered.loc[filtered["Sex"] == "Female", "SurvivedBin"].mean() * 100
                   if (filtered["Sex"] == "Female").any() else 0)
 male_rate      = (filtered.loc[filtered["Sex"] == "Male",   "SurvivedBin"].mean() * 100
                   if (filtered["Sex"] == "Male").any() else 0)
-avg_age        = filtered["Age"].mean()
-avg_fare       = filtered["Fare"].mean()
 
-c1, c2, c3, c4, c5, c6 = st.columns(6)
-c1.metric("👥 Passengers",      f"{total:,}")
-c2.metric("👨‍👩‍👧‍👧 Survivors",        f"{survivors:,}")
-c3.metric("📈 Survival Rate",    f"{survival_rate:.1f}%")
-c4.metric("♀ Female Survival",   f"{female_rate:.1f}%")
-c5.metric("♂ Male Survival",     f"{male_rate:.1f}%")
-c6.metric("💷 Avg Fare",         f"£{avg_fare:.2f}")
+fc_rate        = (filtered.loc[filtered["Pclass"] == "First Class", "SurvivedBin"].mean() * 100
+                  if (filtered["Pclass"] == "First Class").any() else 0)
+tc_rate        = (filtered.loc[filtered["Pclass"] == "Third Class", "SurvivedBin"].mean() * 100
+                  if (filtered["Pclass"] == "Third Class").any() else 0)
+
+c1, c2, c3, c4, c5 = st.columns(5)
+c1.metric("Total passengers", f"{total:,}", "in this dataset", delta_color="off")
+c2.metric("Survived", f"{survivors:,}", f"{survival_rate:.1f}% survival rate", delta_color="off")
+c3.metric("Did not survive", f"{perished:,}", f"{perished_rate:.1f}% perished", delta_color="off")
+c4.metric("Female survival", f"~{int(round(female_rate))}%", f"vs {int(round(male_rate))}% for men", delta_color="off")
+c5.metric("1st class survival", f"~{int(round(fc_rate))}%", f"vs {int(round(tc_rate))}% 3rd class", delta_color="off")
 
 #  KEY INSIGHT CALLOUT  (always computed on the FULL dataset for stability)
 fc_female_rate = df[(df["Pclass"] == "First Class") & (df["Sex"] == "Female")]["SurvivedBin"].mean() * 100
