@@ -173,6 +173,14 @@ selected_travel = st.sidebar.multiselect(
 st.sidebar.markdown("---")
 st.sidebar.caption("Tip: combine filters to slice the manifest.")
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🌐 Data Source")
+st.sidebar.markdown(
+    "Passenger manifest records sourced from [Kaggle's Titanic Survival Prediction Dataset]"
+    "(https://www.kaggle.com/datasets/yasserh/titanic-dataset/data), "
+    "derived from [Encyclopedia Titanica](https://www.encyclopedia-titanica.org/)."
+)
+
 # Apply filters
 filtered = df[
     df["Pclass"].isin(selected_class)
